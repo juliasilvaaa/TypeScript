@@ -1,6 +1,7 @@
 // Objetivo: Criar uma página para cadastro com todas as validações
 
 import { Endereco, IUser } from "@/interfaces/inscription";
+import { json } from "stream/consumers";
 
 // -- Validações
 // Nome: Minimo caracteres
@@ -8,7 +9,7 @@ import { Endereco, IUser } from "@/interfaces/inscription";
 // Data Nascimento - Retornar a data formatada e idade minima (18)
 // Gênero - Campo Opcional - Fornecer opções pro usuario selecionar
 // Imagem de Perfil (Opcional) - Imagem local
-// CPF - Validação e formatação para exibir 
+// CPF - Validação e formatação para exibir
 // Endereço (Opcional) - Formatação de CEP
 // Telefone (Opcional) - Formatação BR
 // Termos e condições (CheckBox) - Só há possibilidade de concluir o cadastro após aceitar os termos
@@ -31,7 +32,7 @@ import { Endereco, IUser } from "@/interfaces/inscription";
 export function handleNomeChange(nome: string): boolean {
   const minCaracteres = 3;
 
-  const nomeValido = nome.length >= minCaracteres
+  const nomeValido = nome.length >= minCaracteres;
   return nomeValido;
 }
 
@@ -51,7 +52,6 @@ export function validarIdade(data: string, idadeMinima = 18): boolean {
   return isOldEnough;
 }
 
-
 // Formatando a data de nascimento (00/00/0000)
 export function formatarDataNascimento(data: string): string {
   const dataObj = new Date(data);
@@ -67,7 +67,6 @@ export function validarEmail(email: string): boolean {
   const regex = /^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/;
   return regex.test(email);
 }
-
 
 // Formatando Telefone
 export function formatarTelefone(telefone: string): string {
@@ -153,7 +152,6 @@ export function validarCpf(cpf: string): boolean {
 
 // Criando função para salvar o usuario localmente
 
-
 export function salvarUsuario(usuario: IUser) {
   const usuariosSalvos = localStorage.getItem("usuarios");
   const listUsuarios: IUser[] = usuariosSalvos
@@ -172,30 +170,43 @@ export function salvarUsuario(usuario: IUser) {
 }
 
 // Login com e-mail e cpf
-export function Login(email: string, cpf: string): IUser | null{
+export function Login(email: string, cpf: string): IUser | null {
   const usuariosSalvos = localStorage.getItem("usuarios");
   const listUsuarios: IUser[] = usuariosSalvos
-  ? JSON.parse(usuariosSalvos)
-  : [];
+    ? JSON.parse(usuariosSalvos)
+    : [];
 
   // CPF e E-mail
   const usuarioEncontrado = listUsuarios.find(
     (usuario) => usuario.email === email && usuario.cpf === cpf
-  )
+  );
 
-  if(usuarioEncontrado){
-    console.log("Login bem-sucedido", usuarioEncontrado)
-    localStorage.setItem("usuarioLogado", JSON.stringify(usuarioEncontrado))
-    return usuarioEncontrado
-  } else{
-    console.log("E-mail ou cpf incorretos")
-    return null
+  if (usuarioEncontrado) {
+    console.log("Login bem-sucedido", usuarioEncontrado);
+    localStorage.setItem("usuarioLogado", JSON.stringify(usuarioEncontrado));
+    return usuarioEncontrado;
+  } else {
+    console.log("E-mail ou cpf incorretos");
+    return null;
   }
+}
+
+// Deletar Usuario
+
+export function removerUsuario(id: number): void {
+const usuariosSalvos = localStorage.getItem("usuarios");
+const listUsuarios = usuariosSalvos ? JSON.parse(usuariosSalvos) : [];
+
+const novalist = listUsuarios.filter((usuario: any) => usuario.id  !== id);
+
+localStorage.setItem("usuarios", JSON.stringify(novalist))
 
 }
 
 // Buscar pelo CEP
-export async function buscarEnderecoPorCep(cep: string): Promise<Endereco | null> {
+export async function buscarEnderecoPorCep(
+  cep: string
+): Promise<Endereco | null> {
   try {
     const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
     const data = await response.json();
@@ -212,6 +223,26 @@ export async function buscarEnderecoPorCep(cep: string): Promise<Endereco | null
   }
 }
 
+export function exibirUsuariosComImagemResumida() {
+  const dados = localStorage.getItem("usuarios");
+
+  if (dados) {
+    const usuarios = JSON.parse(dados);
+
+    usuarios.forEach((usuario: any, index: number) => {
+      const imagemResumida = usuario.imagem
+        ? usuario.imagem.slice(0, 30) + "..." + usuario.imagem.slice(-10)
+        : "Sem imagem";
+
+      console.log(`Usuário ${index + 1}:`);
+      console.log(`Id: ${usuario.id}`);
+      console.log(`  Nome: ${usuario.nome}`);
+      console.log(`  Email: ${usuario.email}`);
+      console.log(`  Imagem (resumida): ${imagemResumida}`);
+    });
+  }
+}
+
 // Exibir usuarios salvos
 
 // export function exibirLocalStorage() {
@@ -223,4 +254,3 @@ export async function buscarEnderecoPorCep(cep: string): Promise<Endereco | null
 // }
 
 // exibirLocalStorage();
-
