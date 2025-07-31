@@ -25,14 +25,12 @@ export default function PaginaComMenu() {
   };
 
   return (
-    <div className="w-screen h-screen flex bg-gray-300">
+    <div className="w-[100%] h-screen flex bg-gray-300">
    
-        <div className="w-[20%]">
           <Menu onSelecionar={setSecaoAtiva} />
-        </div>
-        
+      
 
-        <div className="w-[80%] bg-gray-300">{renderizarConteudo()}</div>
+    {renderizarConteudo()}
       </div>
 
 

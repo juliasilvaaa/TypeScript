@@ -245,12 +245,12 @@ export function exibirUsuariosComImagemResumida() {
 
 // Exibir usuarios salvos
 
-// export function exibirLocalStorage() {
-//   for (let i = 0; i < localStorage.length; i++) {
-//     const key = localStorage.key(i);
-//     const value = localStorage.getItem("usuarios");
-//     console.log(`Chave: ${key}, Valor: ${value}`);
-//   }
-// }
+export function exibirLocalStorage(): any {
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    const value = localStorage.getItem("usuarios");
+    console.log(`Chave: ${key}, Valor: ${value}`);
+  }
+}
 
 // exibirLocalStorage();
